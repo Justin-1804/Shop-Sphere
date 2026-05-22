@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog & Shopping Tips — ShopSphere Nigeria</title>
+  <meta name="description" content="Smart shopping advice, product guides, and lifestyle tips from the ShopSphere team. Learn how to shop smarter in Nigeria." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .blog-hero {
+      background: var(--ink);
+      padding: calc(var(--nav-h) + 64px) 0 80px;
+      position: relative; overflow: hidden;
+    }
+    .blog-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 15% 60%, rgba(245,166,35,0.12) 0%, transparent 55%),
+                  radial-gradient(ellipse 50% 60% at 90% 30%, rgba(232,56,13,0.15) 0%, transparent 55%);
+    }
+    .blog-hero-inner { position: relative; z-index: 2; max-width: 720px; }
+    .blog-hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,166,35,0.15); border: 1px solid rgba(245,166,35,0.3);
+      border-radius: var(--r-full); padding: 8px 18px; margin-bottom: 22px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .blog-hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      color: #fff; line-height: 1.1; margin-bottom: 20px;
+    }
+    .blog-hero-title em { font-style: italic; color: var(--accent); }
+    .blog-hero-desc { color: rgba(255,255,255,0.55); font-size: 1rem; line-height: 1.78; max-width: 520px; }
+
+    /* Category pills */
+    .blog-cats {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-bottom: 44px;
+    }
+    .blog-cat-pill {
+      padding: 8px 20px; border-radius: var(--r-full);
+      font-size: 0.82rem; font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: #fff; color: var(--text-muted);
+      cursor: pointer; transition: all var(--t) var(--ease);
+    }
+    .blog-cat-pill:hover, .blog-cat-pill.active {
+      background: var(--primary); color: #fff; border-color: var(--primary);
+    }
+
+    /* Featured post */
+    .featured-post {
+      display: grid; grid-template-columns: 1.2fr 1fr;
+      gap: 0; border-radius: var(--r-2xl);
+      overflow: hidden; border: 1px solid var(--border);
+      box-shadow: var(--shadow-md); margin-bottom: 56px;
+      transition: box-shadow var(--t-md) var(--ease);
+    }
+    .featured-post:hover { box-shadow: var(--shadow-xl); }
+    .featured-post-img {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8rem; min-height: 380px; position: relative; overflow: hidden;
+    }
+    .featured-post-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(232,56,13,0.12) 0%, transparent 70%);
+    }
+    .featured-badge {
+      position: absolute; top: 20px; left: 20px; z-index: 2;
+      background: var(--primary); color: #fff;
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 5px 14px; border-radius: var(--r-full);
+    }
+    .featured-post-body {
+      padding: 48px 44px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .post-cat-tag {
+      display: inline-block;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--primary);
+      background: var(--primary-muted); padding: 5px 12px;
+      border-radius: var(--r-full); margin-bottom: 16px;
+    }
+    .featured-post-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+      line-height: 1.3; margin-bottom: 14px;
+    }
+    .featured-post-title a { color: inherit; }
+    .featured-post-title a:hover { color: var(--primary); }
+    .post-excerpt {
+      color: var(--text-muted); font-size: 0.93rem;
+      line-height: 1.78; margin-bottom: 24px;
+    }
+    .post-meta {
+      display: flex; align-items: center; gap: 16px;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    .post-author { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-body); }
+    .post-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      font-size: 0.75rem; font-weight: 700; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Post grid */
+    .post-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    }
+    .post-card {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: var(--r-xl); overflow: hidden;
+      transition: transform var(--t) var(--ease), box-shadow var(--t) var(--ease);
+      cursor: pointer;
+    }
+    .post-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .post-card-img {
+      aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem; position: relative;
+    }
+    .post-card-body { padding: 24px; }
+    .post-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem; line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .post-card-title a { color: inherit; }
+    .post-card-title a:hover { color: var(--primary); }
+    .post-card-excerpt {
+      font-size: 0.84rem; color: var(--text-muted);
+      line-height: 1.7; margin-bottom: 16px;
+    }
+    .post-card-meta {
+      font-size: 0.76rem; color: var(--text-muted);
+      display: flex; gap: 14px; align-items: center;
+    }
+    .read-time { display: flex; align-items: center; gap: 4px; }
+
+    /* Article detail modal */
+    .article-modal-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(12,12,14,0.75); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .article-modal-overlay.open { opacity: 1; pointer-events: all; }
+    .article-modal {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: min(740px, 100vw); z-index: 2001;
+      background: #fff; overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: var(--shadow-2xl);
+    }
+    .article-modal-overlay.open .article-modal { transform: translateX(0); }
+    .article-modal-header {
+      padding: 28px 36px 0;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; background: #fff; z-index: 10;
+      border-bottom: 1px solid var(--border); padding-bottom: 20px;
+    }
+    .article-modal-close {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--smoke); font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none; transition: background var(--t) var(--ease);
+    }
+    .article-modal-close:hover { background: var(--smoke-2); }
+    .article-body { padding: 32px 36px 52px; }
+    .article-body h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      line-height: 1.2; margin-bottom: 14px;
+    }
+    .article-body .post-meta { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .article-hero-emoji { font-size: 5rem; margin-bottom: 24px; }
+    .article-body p { color: var(--text-body); line-height: 1.85; margin-bottom: 18px; }
+    .article-body h2 { font-family: var(--font-serif); font-size: 1.25rem; margin: 30px 0 12px; }
+    .article-body ul { margin: 10px 0 18px 22px; }
+    .article-body ul li { margin-bottom: 8px; list-style: disc; line-height: 1.7; color: var(--text-body); }
+    .article-body strong { color: var(--text-head); }
+    .article-tip {
+      background: var(--primary-muted); border-left: 4px solid var(--primary);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      padding: 16px 20px; margin: 20px 0;
+      font-size: 0.93rem; color: var(--text-head);
+    }
+    .article-tip strong { color: var(--primary); }
+
+    /* Newsletter */
+    .blog-newsletter {
+      background: var(--ink); color: #fff;
+      border-radius: var(--r-2xl); padding: 60px 52px;
+      text-align: center; position: relative; overflow: hidden;
+      margin-top: 72px;
+    }
+    .blog-newsletter::before {
+      content: '';
+      position: absolute; top: -20%; right: -5%;
+      width: 340px; height: 340px;
+      border: 50px solid rgba(232,56,13,0.12); border-radius: 50%;
+    }
+    .blog-newsletter h3 {
+      font-family: var(--font-serif); font-size: clamp(1.6rem, 3vw, 2.4rem);
+      color: #fff; margin-bottom: 12px; position: relative; z-index: 2;
+    }
+    .blog-newsletter p {
+      color: rgba(255,255,255,0.55); max-width: 460px;
+      margin: 0 auto 32px; font-size: 0.96rem; line-height: 1.75;
+      position: relative; z-index: 2;
+    }
+    .nl-form {
+      display: flex; gap: 12px; max-width: 440px;
+      margin: 0 auto; position: relative; z-index: 2;
+    }
+    .nl-input {
+      flex: 1; padding: 15px 22px;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: var(--r-full); background: rgba(255,255,255,0.07);
+      color: #fff; font-size: 0.9rem; font-family: var(--font-sans);
+    }
+    .nl-input::placeholder { color: rgba(255,255,255,0.35); }
+    .nl-input:focus { outline: none; border-color: var(--primary); }
+
+    @media(max-width:900px) {
+      .featured-post { grid-template-columns: 1fr; }
+      .featured-post-img { min-height: 200px; font-size: 5rem; }
+      .featured-post-body { padding: 32px 28px; }
+      .post-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media(max-width:600px) {
+      .post-grid { grid-template-columns: 1fr; }
+      .blog-newsletter { padding: 40px 22px; }
+      .nl-form { flex-direction: column; }
+      .article-body { padding: 24px 22px 48px; }
+      .article-modal-header { padding: 20px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">Shop<span>Sphere</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="about.html">About</a>
+      <a href="blog.html" class="active">Blog</a>
+    </div>
+    <div class="nav-actions">
+      <button class="cart-btn" id="open-cart-btn">
+        🛒<span class="cart-count" style="display:none">0</span>
+      </button>
+      <button class="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">🏠 Home</a>
+  <a href="shop.html">🛍️ Shop</a>
+  <a href="about.html">ℹ️ About Us</a>
+  <a href="blog.html">✍️ Blog</a>
+  <a href="faq.html">❓ FAQs</a>
+  <a href="checkout.html">💳 Checkout</a>
+</div>
+
+<!-- HERO -->
+<section class="blog-hero">
+  <div class="container">
+    <div class="blog-hero-inner">
+      <div class="blog-hero-tag">✍️ ShopSphere Journal</div>
+      <h1 class="blog-hero-title">
+        Shop smarter.<br>Live <em>better.</em>
+      </h1>
+      <p class="blog-hero-desc">Product guides, shopping tips, lifestyle inspiration, and the latest news from Nigeria's favourite marketplace — written by real people who love great products.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BREADCRUMB -->
+<div class="container" style="padding-top:28px; padding-bottom:4px">
+  <div class="breadcrumb">
+    <a href="index.html">Home</a><span class="breadcrumb-sep">›</span>
+    <span>Blog & Tips</span>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<section class="section" style="padding-top:40px">
+  <div class="container">
+
+    <!-- Category filters -->
+    <div class="blog-cats" id="blog-cats">
+      <div class="blog-cat-pill active" data-cat="all">All Posts</div>
+      <div class="blog-cat-pill" data-cat="tips">💡 Shopping Tips</div>
+      <div class="blog-cat-pill" data-cat="guides">📖 Product Guides</div>
+      <div class="blog-cat-pill" data-cat="lifestyle">🌿 Lifestyle</div>
+      <div class="blog-cat-pill" data-cat="tech">⚡ Tech & Gadgets</div>
+      <div class="blog-cat-pill" data-cat="sellers">🏪 For Sellers</div>
+    </div>
+
+    <!-- Featured -->
+    <div class="featured-post" data-cat="tips" onclick="openArticle('how-to-avoid-fake')">
+      <div class="featured-post-img">
+        <div class="featured-badge">Featured</div>
+        🛡️
+      </div>
+      <div class="featured-post-body">
+        <div class="post-cat-tag">💡 Shopping Tips</div>
+        <h2 class="featured-post-title">
+          <a href="#">How to Avoid Fake Products When Shopping Online in Nigeria</a>
+        </h2>
+        <p class="post-excerpt">Counterfeit goods cost Nigerian consumers billions every year. Here are the seven red flags every online shopper should know — and how ShopSphere protects you.</p>
+        <div class="post-meta">
+          <div class="post-author">
+            <div class="post-avatar" style="background:var(--primary)">F</div>
+            <span>Funmilayo Adeyinka</span>
+          </div>
+          <span>·</span>
+          <span>June 8, 2025</span>
+          <span>·</span>
+          <span>7 min read</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post Grid -->
+    <div class="post-grid" id="post-grid">
+
+      <div class="post-card" data-cat="guides" onclick="openArticle('electronics-buying-guide')">
+        <div class="post-card-img" style="background: linear-gradient(135deg,#1a1a2e,#0f3460)">📱</div>
+        <div class="post-card-body">
+          <div class="post-cat-tag">📖 Product Guides</div>
+          <h3 class="post-card-title"><a href="#">The Ultimate Electronics Buying Guide for Nigerian Consumers</a></h3>
+          <p class="post-card-excerpt">From checking NAFDAC numbers on imported gadgets to understanding warranty terms in Nigeria — everything you need to know before buying electronics.</p>
+          <div class="post-card-meta">
+            <div class="post-author"><div class="post-avatar" style="background:#1565c0; width:24px;height:24px;font-size:0.65rem">K</div> <span style="font-weight:600">Kehinde</span></div>
+            <span class="read-time">⏱ 8 min</span>
+            <span>May 22, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-card" data-cat="lifestyle" onclick="openArticle('skincare-routine')">
+        <div class="post-card-img" style="background: linear-gradient(135deg,#fce4ec,#f8bbd0)">✨</div>
+        <div class="post-card-body">
+          <div class="post-cat-tag">🌿 Lifestyle</div>
+          <h3 class="post-card-title"><a href="#">Building a Skincare Routine That Works for Nigerian Skin</a></h3>
+          <p class="post-card-excerpt">Nigerian skin faces unique challenges — humidity, dust, hard water, and sun exposure. Our beauty expert shares a simplified routine that actually works.</p>
+          <div class="post-card-meta">
+            <div class="post-author"><div class="post-avatar" style="background:#ad1457; width:24px;height:24px;font-size:0.65rem">N</div> <span style="font-weight:600">Ngozi</span></div>
+            <span class="read-time">⏱ 5 min</span>
+            <span>May 14, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-card" data-cat="tips" onclick="openArticle('save-money-shopping')">
+        <div class="post-card-img" style="background: linear-gradient(135deg,#e8f5e9,#c8e6c9)">💰</div>
+        <div class="post-card-body">
+          <div class="post-cat-tag">💡 Shopping Tips</div>
+          <h3 class="post-card-title"><a href="#">10 Ways to Save More Money While Shopping Online</a></h3>
+          <p class="post-card-excerpt">From timing your purchases around flash sales to bundling orders to cut delivery costs — practical money-saving tactics that actually work on Nigerian marketplaces.</p>
+          <div class="post-card-meta">
+            <div class="post-author"><div class="post-avatar" style="background:var(--primary); width:24px;height:24px;font-size:0.65rem">F</div> <span style="font-weight:600">Funmilayo</span></div>
+            <span class="read-time">⏱ 6 min</span>
+            <span>May 5, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-card" data-cat="tech" onclick="openArticle('home-office-setup')">
+        <div class="post-card-img" style="background: linear-gradient(135deg,#e3f2fd,#bbdefb)">🖥️</div>
+        <div class="post-card-body">
+          <div class="post-cat-tag">⚡ Tech & Gadgets</div>
+          <h3 class="post-card-title"><a href="#">The ₦150,000 Home Office Setup That Will Boost Your Productivity</a></h3>
+          <p class="post-card-excerpt">Remote work is here to stay. We put together a realistic, high-quality home office setup for under ₦150,000 using products available on ShopSphere.</p>
+          <div class="post-card-meta">
+            <div class="post-author"><div class="post-avatar" style="background:#1565c0; width:24px;height:24px;font-size:0.65rem">K</div> <span style="font-weight:600">Kehinde</span></div>
+            <span class="read-time">⏱ 9 min</span>
+            <span>Apr 28, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-card" data-cat="sellers" onclick="openArticle('sell-online-nigeria')">
+        <div class="post-card-img" style="background: linear-gradient(135deg,#fff3e0,#ffe0b2)">🏪</div>
+        <div class="post-card-body">
+          <div class="post-cat-tag">🏪 For Sellers</div>
+          <h3 class="post-card-title"><a href="#">How to Start Selling Online in Nigeria with Zero Capital</a></h3>
+          <p class="post-card-excerpt">You don't need inventory to start. Learn about dropshipping, consignment selling, and how our free seller platform can be your launchpad into e-commerce.</p>
+          <div class="post-card-meta">
+            <div class="post-author"><div class="post-avatar" style="background:#1a9e5a; width:24px;height:24px;font-size:0.65rem">A</div> <span style="font-weight:600">Adeyemi</span></div>
+            <span class="read-time">⏱ 10 min</span>
+            <span>Apr 15, 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-card" data-cat="lifestyle" onclick="openArticle('home-decor-abeokuta')">
+        <div class="post-card-img" style="background: linear-gradient(135deg,#f3e5f5,#e1bee7)">🛋️</div>
+        <div class="post-card-body">
+          <div class="post-cat-tag">🌿 Lifestyle</div>
+          <h3 class="post-card-title"><a href="#">Home Décor Ideas on a Budget: Transforming Your Space for Under ₦50,000</a></h3>
+          <p class="post-card-excerpt">You don't need a designer budget to have a beautiful home. These practical décor ideas use affordable products to completely transform any room.</p>
+          <div class="post-card-meta">
+            <div class="post-author"><div class="post-avatar" style="background:var(--primary); width:24px;height:24px;font-size:0.65rem">F</div> <span style="font-weight:600">Funmilayo</span></div>
+            <span class="read-time">⏱ 7 min</span>
+            <span>Apr 2, 2025</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /post-grid -->
+
+    <!-- Newsletter -->
+    <div class="blog-newsletter">
+      <h3>Get the best tips in your inbox</h3>
+      <p>Join 12,000+ Nigerian shoppers who receive our weekly deals digest and shopping guides. Unsubscribe anytime.</p>
+      <div class="nl-form">
+        <input type="email" class="nl-input" placeholder="Your WhatsApp number or email…" />
+        <button class="btn btn-primary">Subscribe →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ARTICLE MODAL -->
+<div class="article-modal-overlay" id="article-overlay" onclick="handleOverlayClick(event)">
+  <div class="article-modal" id="article-modal">
+    <div class="article-modal-header">
+      <a href="blog.html" style="font-family:var(--font-serif); font-weight:700; font-size:1.1rem; color:var(--primary)">Shop<span style="color:var(--text-head)">Sphere</span> Blog</a>
+      <button class="article-modal-close" onclick="closeArticle()">✕</button>
+    </div>
+    <div class="article-body" id="article-body">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-bottom" style="padding:24px 0">
+      <span>© 2025 ShopSphere Nigeria. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQs</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- CART -->
+<div class="cart-overlay" id="cart-overlay"></div>
+<aside class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h2 class="cart-title">🛒 Cart</h2>
+    <button class="cart-close" id="close-cart-btn">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items-body"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cart-subtotal-val">₦0</span></div>
+    <div class="cart-total"><span>Total</span><span class="cart-total-val" id="cart-total-val">₦0</span></div>
+    <a href="checkout.html" class="btn btn-primary btn-block btn-lg">Checkout →</a>
+  </div>
+</aside>
+
+<button class="back-to-top" id="back-to-top">↑</button>
+
+<script src="core.js"></script>
+<script>
+  // ── ARTICLES DATA ──
+  const ARTICLES = {
+    'how-to-avoid-fake': {
+      emoji: '🛡️',
+      title: 'How to Avoid Fake Products When Shopping Online in Nigeria',
+      author: 'Funmilayo Adeyinka', authorColor: '#E8380D', authorInit: 'F',
+      date: 'June 8, 2025', readTime: '7 min',
+      content: `
+        <p>Counterfeit goods are a serious problem in Nigeria's e-commerce space. From fake electronics to diluted beauty products, unscrupulous sellers cost Nigerian consumers an estimated ₦180 billion every year. But you don't have to be a victim — if you know what to look for.</p>
+
+        <h2>1. Check for suspiciously low prices</h2>
+        <p>If a product is priced at less than 50% of what you'd pay in a reputable store, that's your first red flag. Legitimate sellers have real costs — manufacturing, logistics, staffing. Prices that seem too good to be true almost always are.</p>
+        <div class="article-tip"><strong>💡 ShopSphere Tip:</strong> We display the original RRP (recommended retail price) alongside our sale price so you can always verify the discount is legitimate.</div>
+
+        <h2>2. Read seller reviews — all of them</h2>
+        <p>Don't just look at the star rating. Read actual text reviews, especially the 1- and 2-star ones. Watch out for vague positive reviews ("Great product! Fast delivery!") that could be fake, and look for specific negative experiences about product quality.</p>
+
+        <h2>3. Demand product photos, not stock images</h2>
+        <p>Genuine sellers have real inventory and can provide real photos. If a seller can only provide studio-quality manufacturer images, ask for a photo of the actual item in their warehouse or store. Most honest sellers will happily oblige.</p>
+
+        <h2>4. Look for NAFDAC or SON certification on applicable products</h2>
+        <p>Food, cosmetics, and health products in Nigeria should carry NAFDAC registration numbers. Electronics may carry SON (Standards Organisation of Nigeria) marks. Verify these numbers at <a href="https://www.nafdac.gov.ng" target="_blank">nafdac.gov.ng</a> if you're unsure.</p>
+
+        <h2>5. Use payment methods with buyer protection</h2>
+        <p>Avoid paying directly into a personal bank account for large purchases. Use platforms that hold funds until delivery is confirmed. At ShopSphere, our WhatsApp order system creates a verifiable record of every transaction.</p>
+
+        <h2>6. Be wary of sellers who rush you</h2>
+        <p>"Only 2 left!" and "Offer expires in 10 minutes!" are classic pressure tactics used to prevent you from doing your due diligence. Take your time. Legitimate products don't disappear instantly.</p>
+
+        <h2>7. Research the seller, not just the product</h2>
+        <p>How long has this seller been operating? Do they have a physical address? A working phone number? A WhatsApp line you can verify? At ShopSphere, all sellers are registered with our team and have gone through our verification process before their products go live.</p>
+
+        <p>At ShopSphere, we take authenticity seriously. Every product on our platform is manually reviewed, and we have a zero-tolerance policy for counterfeits. If you ever receive a product you believe is fake, <a href="https://wa.me/2348012345678">contact us immediately</a> — we'll investigate and make it right.</p>
+      `
+    },
+    'electronics-buying-guide': {
+      emoji: '📱',
+      title: 'The Ultimate Electronics Buying Guide for Nigerian Consumers',
+      author: 'Kehinde Oduola', authorColor: '#1565c0', authorInit: 'K',
+      date: 'May 22, 2025', readTime: '8 min',
+      content: `
+        <p>Electronics are among the most common purchases on Nigerian e-commerce platforms — and also among the most frequently faked or misrepresented. This guide gives you everything you need to make confident, well-informed electronics purchases.</p>
+
+        <h2>Understanding warranty terms in Nigeria</h2>
+        <p>Most electronics sold in Nigeria come with either a manufacturer's international warranty or a local seller warranty. These are very different things. An international warranty may not be honoured in Nigeria. Always ask specifically: "Is this warranty backed by the Nigerian distributor or the manufacturer's local office?"</p>
+        <div class="article-tip"><strong>💡 Tip:</strong> At ShopSphere, all electronics products must carry a minimum 3-month local warranty to be listed on our platform. We verify this before approving any seller.</div>
+
+        <h2>UK/US/EU vs Nigerian market specifications</h2>
+        <p>Products designed for foreign markets may behave differently in Nigeria. Key things to check:</p>
+        <ul>
+          <li><strong>Voltage:</strong> Nigeria uses 230V. Products designed for 110V (common in US) need converters and can fail prematurely without them.</li>
+          <li><strong>Plug type:</strong> Nigeria uses Type G (3-pin British standard). Some imported products have Type A/B (US flat pin) plugs.</li>
+          <li><strong>Network bands:</strong> For phones, ensure they support the GSM 900/1800 MHz bands used by Nigerian carriers (MTN, Airtel, Glo, 9mobile).</li>
+          <li><strong>Software region locks:</strong> Some phones and smart TVs are region-locked and may not support Nigerian apps or channels.</li>
+        </ul>
+
+        <h2>Red flags when buying second-hand electronics</h2>
+        <p>There's nothing wrong with buying quality pre-owned electronics — it can save you significant money. But watch out for:</p>
+        <ul>
+          <li>Missing or damaged serial number stickers (could indicate stolen goods)</li>
+          <li>Mismatched or aftermarket batteries (especially in laptops and phones)</li>
+          <li>Signs of water damage (check the charging port for corrosion)</li>
+          <li>Suspiciously clean devices that smell like cleaning chemicals</li>
+        </ul>
+
+        <h2>The best value categories right now</h2>
+        <p>Based on our sales data, the best value-for-money electronics on ShopSphere right now are mechanical keyboards, USB-C hubs, and Bluetooth speakers. Prices on smartwatches have also dropped significantly in the past 6 months as more Chinese brands enter the Nigerian market with strong quality products.</p>
+
+        <p>Have a specific product question? Chat with our team on <a href="https://wa.me/2348012345678">WhatsApp</a> — we're happy to give honest, unbiased recommendations.</p>
+      `
+    },
+    'save-money-shopping': {
+      emoji: '💰',
+      title: '10 Ways to Save More Money While Shopping Online',
+      author: 'Funmilayo Adeyinka', authorColor: '#E8380D', authorInit: 'F',
+      date: 'May 5, 2025', readTime: '6 min',
+      content: `
+        <p>Online shopping doesn't have to drain your wallet. With a little strategy, you can get the same quality products for significantly less — and we're going to show you exactly how.</p>
+
+        <h2>1. Time your purchases around promotions</h2>
+        <p>Most Nigerian e-commerce platforms run major sales around Black Friday (November), Christmas, New Year, and Independence Day (October 1st). If a purchase isn't urgent, waiting 4–8 weeks for a sale event can save you 20–40%.</p>
+
+        <h2>2. Subscribe to deal alerts</h2>
+        <p>Join our WhatsApp broadcast list by sending "SUBSCRIBE" to +234 801 234 5678. We send exclusive deals to subscribers 24–48 hours before they go public.</p>
+
+        <h2>3. Bundle your orders</h2>
+        <p>Delivery fees are flat-rate on ShopSphere — you pay ₦1,000 whether you order 1 item or 10 items to Abeokuta. Group your purchases into single orders to avoid paying multiple delivery fees.</p>
+
+        <h2>4. Compare the "old price" against market rate</h2>
+        <p>Not every crossed-out "old price" is a genuine saving. Before buying a discounted item, quickly search for the product on two other platforms. If our price is consistently lower, the discount is real.</p>
+
+        <h2>5. Use store pickup when you're nearby</h2>
+        <p>If you're in Abeokuta, store pickup is always free. On a ₦5,000 order, that ₦1,000 delivery saving is a 20% discount by itself.</p>
+
+        <h2>6. Consider the total cost of ownership for electronics</h2>
+        <p>A cheaper phone that needs repairs in 8 months is more expensive than a pricier one that lasts 3 years. When buying electronics, factor in the warranty, brand reputation, and local availability of spare parts.</p>
+
+        <h2>7. Read product descriptions and specs carefully</h2>
+        <p>Returns cost everyone time and money. Take 5 extra minutes to read size charts, check compatibility, and understand exactly what's included in the box. This simple habit can save you multiple return trips.</p>
+
+        <h2>8. Check if the old model is still available</h2>
+        <p>When a new version of a product launches, the previous model often drops significantly in price. Last-generation smartphones and appliances can offer excellent value at 30–50% off.</p>
+
+        <h2>9. Wishlist and wait</h2>
+        <p>If a product is on your wishlist but not urgent, watch it for 2–3 weeks. Prices fluctuate, and many products go on sale periodically. Patience is one of the best money-saving tools.</p>
+
+        <h2>10. Follow us on social media</h2>
+        <p>Our Instagram page posts daily deals and limited flash sales that aren't always listed on the main website. Follow @ShopSphereNG for the earliest access to discounts.</p>
+
+        <div class="article-tip"><strong>💡 Bottom Line:</strong> The single biggest saving most people can make is simply planning purchases in advance rather than buying urgently. Urgency is expensive.</div>
+      `
+    },
+    'home-office-setup': {
+      emoji: '🖥️',
+      title: 'The ₦150,000 Home Office Setup That Will Boost Your Productivity',
+      author: 'Kehinde Oduola', authorColor: '#1565c0', authorInit: 'K',
+      date: 'April 28, 2025', readTime: '9 min',
+      content: `
+        <p>Remote work is no longer a temporary accommodation — it's a permanent feature of how millions of Nigerians work. But working from a kitchen table or your bedroom floor is killing your productivity and straining your back. Here's how to build a proper home office for under ₦150,000.</p>
+
+        <h2>The essentials vs the nice-to-haves</h2>
+        <p>A productive home office needs these essentials: a dedicated workspace (even a corner of a room), good lighting, a proper chair, reliable internet, and minimal distractions. Everything else is an upgrade.</p>
+
+        <h2>The ₦150,000 ShopSphere Build</h2>
+        <ul>
+          <li><strong>Mechanical Keyboard (₦35,000):</strong> Your hands spend hours on a keyboard. A mechanical keyboard with tactile switches dramatically reduces typing fatigue and errors. Our Gaming Mechanical Keyboard is the best value option on the platform.</li>
+          <li><strong>USB-C Hub 7-in-1 (₦18,000):</strong> Modern laptops have few ports. A hub adds HDMI, USB 3.0, SD cards, and fast charging — turning your laptop into a proper workstation.</li>
+          <li><strong>4K Webcam with Ring Light (₦28,000):</strong> If you're on video calls, how you appear matters. A 4K webcam with built-in lighting instantly elevates your professional presence.</li>
+          <li><strong>Bluetooth Speaker (₦22,500):</strong> Background music or white noise significantly improves focus for many people. A quality wireless speaker near your desk does double duty as your entertainment system too.</li>
+          <li><strong>Yoga Mat (₦9,500):</strong> This sounds odd but placing a yoga mat near your desk for 5-minute stretching breaks significantly reduces back pain from long sitting sessions. Highly recommended.</li>
+          <li><strong>Desk Planner (₦4,800):</strong> A physical planner on your desk is still one of the most effective productivity tools. Writing tasks by hand improves retention and focus better than digital apps.</li>
+          <li><strong>Aromatherapy Diffuser (₦14,500):</strong> Scent is one of the most underrated tools for creating a productive environment. Peppermint and lemon essential oils are scientifically linked to improved focus.</li>
+        </ul>
+        <p><strong>Total: ₦132,300</strong> — leaving ₦17,700 in your budget for a proper desk lamp, cable management, or even a good task chair cushion.</p>
+
+        <div class="article-tip"><strong>💡 Pro Tip:</strong> The single biggest productivity improvement you can make is blocking your phone during deep work periods. No gadget will fix a distracted mind.</div>
+
+        <p>All products in this list are available on <a href="shop.html">ShopSphere</a> with same-day delivery in Abeokuta. Bundle your order to save on delivery costs.</p>
+      `
+    },
+    'sell-online-nigeria': {
+      emoji: '🏪',
+      title: 'How to Start Selling Online in Nigeria with Zero Capital',
+      author: 'Adeyemi Salami', authorColor: '#1a9e5a', authorInit: 'A',
+      date: 'April 15, 2025', readTime: '10 min',
+      content: `
+        <p>I started ShopSphere from a WhatsApp group with zero upfront capital. I didn't have a warehouse. I didn't have stock. What I had was knowledge of what people wanted to buy, the ability to source it, and the work ethic to make it happen. Here's what I learned.</p>
+
+        <h2>Model 1: Dropshipping</h2>
+        <p>Dropshipping means you list products you don't own, take the order and payment, then purchase from a supplier and have it shipped directly to your customer. You never touch the product. Your profit is the markup between your selling price and supplier cost.</p>
+        <p>The keys to making dropshipping work in Nigeria:</p>
+        <ul>
+          <li>Build relationships with wholesale suppliers in Computer Village (Lagos), Onitsha Main Market, or Alaba International — they often allow order-by-order purchasing.</li>
+          <li>Add a 20–35% markup to cover your time, delivery coordination, and profit.</li>
+          <li>Be honest with customers about delivery timelines — dropshipping takes longer than stocked items.</li>
+        </ul>
+
+        <h2>Model 2: Consignment</h2>
+        <p>Find people in your network who have products to sell but don't have the time or know-how to sell online. Offer to list and sell their products for a 15–25% commission. You provide the platform, marketing, and customer service. They provide the stock.</p>
+
+        <h2>Model 3: Skills-based products</h2>
+        <p>Can you make something? Tie-and-dye fabric, handmade jewellery, baked goods, leather accessories, natural skincare products, handmade candles? These require minimal startup capital (often just materials), and ShopSphere's Food & Lifestyle categories are specifically designed for artisan sellers.</p>
+
+        <h2>Listing on ShopSphere (it's free)</h2>
+        <p>Our <a href="dashboard.html">Seller Dashboard</a> is free to use. Upload your product with a clear description, set your price, and our team reviews and approves it within 24 hours. Once approved, your product is visible to all ShopSphere shoppers across Nigeria.</p>
+        <p>We handle payment collection and customer communication for you. You focus on fulfilment. Commission is deducted automatically before your weekly payout.</p>
+
+        <h2>The most common mistake new sellers make</h2>
+        <p>Trying to sell everything. The most successful sellers on ShopSphere specialise in 1–3 product categories and build real expertise. They know their products inside out, they know their customers' questions before they're even asked, and they build a reputation for being the go-to person for those specific products.</p>
+
+        <div class="article-tip"><strong>💡 Start here:</strong> List 3–5 products you genuinely know well and believe in. Focus on photos, descriptions, and pricing. Get your first 5 reviews. Then expand.</div>
+
+        <p>Questions about selling on ShopSphere? Message us on <a href="https://wa.me/2348012345678">WhatsApp</a> or visit our <a href="dashboard.html">Seller Dashboard</a>.</p>
+      `
+    },
+    'skincare-routine': {
+      emoji: '✨',
+      title: 'Building a Skincare Routine That Works for Nigerian Skin',
+      author: 'Ngozi Eze', authorColor: '#ad1457', authorInit: 'N',
+      date: 'May 14, 2025', readTime: '5 min',
+      content: `
+        <p>Nigerian skin is beautiful — but it also faces a unique combination of environmental stressors: intense UV radiation, high humidity, harmattan season dryness, hard water, dust, and pollution. The Western skincare routines you see on Instagram were not designed for our climate. Here's what actually works.</p>
+
+        <h2>The basics: less is more</h2>
+        <p>Many skin problems in Nigeria are caused by over-cleansing, over-exfoliating, or layering too many products. A simple, consistent routine beats a complicated, inconsistent one every single time.</p>
+
+        <h2>The 4-step routine that works for Nigerian skin</h2>
+        <ul>
+          <li><strong>Step 1 — Cleanser (Morning & Evening):</strong> Use a gentle, non-stripping cleanser. Avoid anything with SLS (sodium lauryl sulphate) as the first ingredient — it strips the skin's natural barrier, causing your skin to overproduce oil or dry out severely.</li>
+          <li><strong>Step 2 — Vitamin C Serum (Morning only):</strong> This is the single most impactful product for Nigerian skin. 20% Vitamin C with niacinamide actively fights hyperpigmentation (dark spots from sun exposure and post-acne marks). Apply 3–5 drops to clean skin before moisturiser.</li>
+          <li><strong>Step 3 — Light Moisturiser (Morning & Evening):</strong> In Nigeria's humidity, you need moisture without heaviness. Look for gel-based moisturisers with hyaluronic acid for mornings. During harmattan, switch to a slightly heavier cream formulation.</li>
+          <li><strong>Step 4 — SPF 30+ Sunscreen (Morning only):</strong> This is non-negotiable. Nigeria sits close to the equator — UV radiation here is significantly stronger than in Europe or the US. Unprotected sun exposure is the number one cause of premature ageing and hyperpigmentation in Nigerian women and men.</li>
+        </ul>
+
+        <h2>The one product most Nigerian skin needs most</h2>
+        <p>If your budget only allows one product, choose the Vitamin C serum. Our Vitamin C Brightening Serum (available on <a href="shop.html?cat=beauty">ShopSphere</a>) has our highest customer satisfaction rating across the entire beauty category. Customers consistently report visible improvements in skin tone within 4–6 weeks.</p>
+
+        <div class="article-tip"><strong>💡 A note on bleaching:</strong> Hydroquinone and mercury-based skin lightening products cause long-term skin damage and are banned in many countries. Vitamin C and niacinamide are safe, effective alternatives that brighten skin tone without the health risks.</div>
+
+        <p>Have a skincare question? Drop us a message on <a href="https://wa.me/2348012345678">WhatsApp</a> — Ngozi from our team responds to skincare questions personally.</p>
+      `
+    },
+    'home-decor-abeokuta': {
+      emoji: '🛋️',
+      title: 'Home Décor Ideas on a Budget: Transforming Your Space for Under ₦50,000',
+      author: 'Funmilayo Adeyinka', authorColor: '#E8380D', authorInit: 'F',
+      date: 'April 2, 2025', readTime: '7 min',
+      content: `
+        <p>You don't need to spend millions to have a home that looks and feels beautiful. With strategic choices and the right products, ₦50,000 can genuinely transform the look and feel of a room. Here's how.</p>
+
+        <h2>Start with scent and ambience — it's the cheapest transformation</h2>
+        <p>Before buying anything visible, buy an aromatherapy diffuser and a few essential oils. The way a room smells has an enormous psychological impact on how we perceive it. A room that smells clean and pleasant feels more luxurious — regardless of what the furniture looks like. Our Aromatherapy Diffuser Set (₦14,500) is consistently our best-reviewed home product.</p>
+
+        <h2>Throw pillows change everything</h2>
+        <p>Throw pillows are the quickest, most affordable way to update a tired sofa or bedroom. A set of 4 coordinated velvet pillows can turn a plain grey sofa into a styled Instagram setup. Our Premium Throw Pillow Set is priced at ₦21,000 for 4 pieces — that's extraordinary value for the visual impact they deliver.</p>
+
+        <h2>Light is your most powerful tool</h2>
+        <p>Harsh, overhead fluorescent lighting makes even beautiful rooms feel cold and institutional. Replace it — or supplement it — with warm-toned lamps or an LED strip light behind a TV unit or along a ceiling cove. Warm lighting (2700–3000K colour temperature) transforms the perceived comfort of a space instantly.</p>
+
+        <h2>The kitchen is the soul of the home</h2>
+        <p>No space in a Nigerian home gets more use than the kitchen. A set of quality stainless steel cookware, a beautiful cutting board, and a well-organised counter space dramatically improves both the kitchen experience and the food that comes out of it. Our Bamboo Cutting Board Set (₦8,500) is a small investment that makes a daily difference.</p>
+
+        <h2>Plants: free décor from your garden</h2>
+        <p>If you have outdoor space, transplant small garden plants into pots for inside. Snake plants, pothos, and peace lilies all thrive indoors in Nigeria's climate, improve air quality, and cost nothing beyond a pot and some soil.</p>
+
+        <div class="article-tip"><strong>💡 The ₦50,000 Décor Starter Kit:</strong> Diffuser Set (₦14,500) + Throw Pillows (₦21,000) + Cutting Board Set (₦8,500) + a warm lamp from your local market (₦5,000) = ₦49,000. Four products. Enormous visual impact.</div>
+
+        <p>All of our Home & Living products are available at <a href="shop.html?cat=home">shop.shopsphere.ng/home</a> with fast delivery across Nigeria.</p>
+      `
+    }
+  };
+
+  // ── OPEN ARTICLE ──
+  function openArticle(id) {
+    const a = ARTICLES[id];
+    if (!a) return;
+    document.getElementById("article-body").innerHTML = `
+      <div class="article-hero-emoji">${a.emoji}</div>
+      <div class="post-cat-tag" style="display:inline-block; margin-bottom:16px">Article</div>
+      <h1>${a.title}</h1>
+      <div class="post-meta">
+        <div class="post-author">
+          <div class="post-avatar" style="background:${a.authorColor}">${a.authorInit}</div>
+          <span>${a.author}</span>
+        </div>
+        <span>·</span>
+        <span>${a.date}</span>
+        <span>·</span>
+        <span>⏱ ${a.readTime} read</span>
+      </div>
+      ${a.content}
+      <div style="margin-top:40px; padding-top:28px; border-top:1px solid var(--border)">
+        <a href="shop.html" class="btn btn-primary">🛒 Shop Related Products →</a>
+      </div>
+    `;
+    document.getElementById("article-overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeArticle() {
+    document.getElementById("article-overlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById("article-overlay")) closeArticle();
+  }
+
+  // Close on Escape
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeArticle(); });
+
+  // ── CATEGORY FILTER ──
+  document.querySelectorAll(".blog-cat-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll(".blog-cat-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      const cat = pill.dataset.cat;
+      // filter featured
+      const featured = document.querySelector(".featured-post");
+      featured.style.display = (cat === "all" || featured.dataset.cat === cat) ? "grid" : "none";
+      // filter grid
+      document.querySelectorAll(".post-card").forEach(card => {
+        card.style.display = (cat === "all" || card.dataset.cat === cat) ? "block" : "none";
+      });
+    });
+  });
+</script>
+</body>
+</html>
